@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora da Confeitaria</title>
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{background:#FAF5F8;color:#332028;font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:16px;line-height:1.45;padding-bottom:30px}
+  .wrap{max-width:440px;margin:0 auto;padding:0 14px}
+  header{background:#4A1E33;color:#fff;padding:18px 0 16px;border-bottom:3px solid #D4547F}
+  header .wrap{display:flex;align-items:baseline;justify-content:space-between}
+  .logo{font-weight:800;font-size:1.02rem}
+  .logo em{font-style:normal;color:#D4547F}
+  .edicao{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+  h1{font-size:1.05rem;font-weight:700;margin:18px 0 2px}
+  .sub{color:#7A5A6B;font-size:.85rem;margin-bottom:14px}
+  .bloco{background:#fff;border:1px solid #E8D5DF;border-radius:14px;padding:16px;margin-bottom:12px}
+  label{display:block;font-weight:700;font-size:.85rem;margin-bottom:6px}
+  label small{font-weight:500;color:#7A5A6B}
+  input[type=text]{width:100%;padding:13px 12px;font-size:1.05rem;font-family:inherit;
+    color:#332028;background:#fff;border:1.5px solid #C9A8BA;border-radius:10px}
+  input:focus{outline:2px solid #D4547F;outline-offset:1px;border-color:#D4547F}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .campo-g{margin-bottom:12px}
+  .campo-g:last-child{margin-bottom:0}
+  .chips{display:flex;gap:8px;margin-top:8px}
+  .chips button{flex:1;padding:10px 0;border-radius:10px;border:1.5px solid #C9A8BA;
+    background:#fff;color:#332028;font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer}
+  .chips button.on{background:#D4547F;border-color:#D4547F;color:#fff}
+  .custo-chip{background:#FBEFF4;border:1px solid #E5B8CB;border-radius:10px;
+    padding:11px 12px;margin-top:12px;font-size:.85rem}
+  .custo-chip b{font-variant-numeric:tabular-nums;color:#A83A63}
+  .custo-chip .mo{display:block;font-size:.75rem;color:#7A5A6B;margin-top:2px}
+  table.canais{width:100%;border-collapse:collapse;font-size:.9rem}
+  .canais th{background:#632A46;color:#fff;text-align:left;padding:9px 10px;font-size:.78rem;
+    letter-spacing:.04em;text-transform:uppercase}
+  .canais td{padding:11px 10px;border-bottom:1px solid #E8D5DF;vertical-align:middle}
+  .canais tr:nth-child(even) td{background:#FAF5F8}
+  .canais .preco{text-align:right;font-weight:800;font-size:1.05rem;color:#A83A63;
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  .canais .sobra{display:block;font-weight:500;font-size:.72rem;color:#0B7D57}
+  .canais .canal small{display:block;color:#7A5A6B;font-weight:500;font-size:.72rem}
+  details{margin-top:10px}
+  summary{cursor:pointer;font-weight:700;font-size:.85rem;color:#A83A63;list-style:none;padding:6px 0}
+  summary::before{content:"+ ";font-weight:800}
+  details[open] summary::before{content:"− "}
+  .mtab{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px}
+  .mtab td{padding:6px 4px;border-bottom:1px solid #E8D5DF}
+  .mtab input{padding:8px;font-size:.95rem}
+  .nota{color:#9C7A8B;font-size:.75rem;margin:14px 0 20px;text-align:center}
+  a.volta{color:#A83A63;font-weight:700;font-size:.85rem;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="logo">MARGEM <em>GORDA</em> · CONFEITARIA</div>
+    <div class="edicao">Edição 2026</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>Quanto cobrar pelo seu doce?</h1>
+  <p class="sub">Receita + rendimento + as SUAS horas de trabalho — o preço certo por canal sai na hora. Aqui a sua hora tem preço.</p>
+
+  <div class="bloco">
+    <div class="grid2 campo-g">
+      <div>
+        <label for="insumos">Insumos da receita <small>R$ — com embalagens e gás</small></label>
+        <input id="insumos" type="text" inputmode="decimal" placeholder="13,96">
+      </div>
+      <div>
+        <label for="rende">Rende <small>unidades</small></label>
+        <input id="rende" type="text" inputmode="decimal" placeholder="30">
+      </div>
+    </div>
+    <div class="grid2 campo-g">
+      <div>
+        <label for="horas">Horas de trabalho <small>meia hora = 0,5</small></label>
+        <input id="horas" type="text" inputmode="decimal" placeholder="0,5">
+      </div>
+      <div>
+        <label for="valorHora">Valor da SUA hora <small>R$</small></label>
+        <input id="valorHora" type="text" inputmode="decimal" placeholder="25">
+      </div>
+    </div>
+    <div class="campo-g">
+      <label for="unVenda">Unidades por venda <small>cento = 100 · pote/bolo = 1</small></label>
+      <input id="unVenda" type="text" inputmode="decimal" placeholder="100">
+      <div class="chips" id="chipsUn">
+        <button type="button" data-u="1">1 un</button>
+        <button type="button" data-u="50">50</button>
+        <button type="button" data-u="100" class="on">Cento</button>
+      </div>
+    </div>
+    <div class="custo-chip" id="chipCusto">
+      <span>Custo por venda: <b id="custoVenda">—</b></span>
+      <span class="mo" id="moLinha"></span>
+    </div>
+  </div>
+
+  <div class="bloco" style="padding:0;overflow:hidden">
+    <table class="canais">
+      <thead><tr><th>Canal</th><th style="text-align:right">Preço sugerido</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+
+  <div class="bloco">
+    <details>
+      <summary>Ajustar taxas e margens por canal</summary>
+      <table class="mtab" id="mtab"></table>
+    </details>
+  </div>
+
+  <p class="nota">Sua hora: salário desejado ÷ horas produtivas (ex.: 3.000 ÷ 120 h = R$ 25). NUNCA use 0.<br>
+  Faixas 2026: bolo de pote R$ 10–15 · cento de brigadeiro R$ 130–160 · decorado R$ 90–150/kg.<br>
+  Fichas técnicas, orçamento com sinal e ponto de equilíbrio: na Planilha da Confeitaria.<br><br>
+  <a class="volta" href="index.html">← todas as calculadoras</a></p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var fmtBRL = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+  var CANAIS = [
+    {n:"Encomenda direta — Pix", d:"seu melhor canal",            tx:0,    mg:40},
+    {n:"Encomenda — cartão/link",d:"link de pagamento",           tx:4,    mg:40},
+    {n:"Pronta entrega / vitrine",d:"balcão, maquininha",         tx:2,    mg:45},
+    {n:"iFood Básico",           d:"você entrega",                tx:15.2, mg:35},
+    {n:"iFood Entrega",          d:"iFood entrega",               tx:26.5, mg:30},
+    {n:"Revenda / consignação",  d:"padaria revende (30%)",       tx:30,   mg:25}
+  ];
+  function num(el){
+    var v = String(el.value||"").trim();
+    if(!v) return 0;
+    if(v.indexOf(",")>-1){ v = v.replace(/\./g,"").replace(",","."); }
+    else if(/^\d{1,3}(\.\d{3})+$/.test(v)){ v = v.replace(/\./g,""); }
+    var n = parseFloat(v);
+    return isFinite(n) ? n : 0;
+  }
+  function p90(x){
+    var fl = Math.floor(x);
+    return (x-fl>0.9) ? fl+1.9 : fl+0.9;
+  }
+  function montaAjustes(){
+    var h = "<tr><td></td><td><b>Taxas %</b></td><td><b>Margem-alvo %</b></td></tr>";
+    CANAIS.forEach(function(c,i){
+      h += "<tr><td>"+c.n+"</td>"+
+        "<td><input type='text' inputmode='decimal' id='tx"+i+"' value='"+String(c.tx).replace(".",",")+"'></td>"+
+        "<td><input type='text' inputmode='decimal' id='mg"+i+"' value='"+c.mg+"'></td></tr>";
+    });
+    $("mtab").innerHTML = h;
+    CANAIS.forEach(function(c,i){
+      $("tx"+i).addEventListener("input", calc);
+      $("mg"+i).addEventListener("input", calc);
+    });
+  }
+  function calc(){
+    var ins = num($("insumos")), rende = num($("rende"));
+    var horas = num($("horas")), vh = num($("valorHora")), unV = num($("unVenda"));
+    var html = "";
+    if(ins>0 && rende>0 && unV>0){
+      var mo = horas*vh;
+      var custoUn = (ins+mo)/rende;
+      var custoVenda = custoUn*unV;
+      $("custoVenda").textContent = fmtBRL.format(custoVenda);
+      $("moLinha").textContent = "sendo "+fmtBRL.format(mo/rende*unV)+" da SUA mão de obra ("+
+        fmtBRL.format(custoUn)+"/unidade)";
+      CANAIS.forEach(function(c,i){
+        var tx = num($("tx"+i))/100, mg = num($("mg"+i))/100;
+        var div = 1-tx-mg;
+        var celula;
+        if(div<=0){ celula = "inviável"; }
+        else{
+          var preco = p90(custoVenda/div);
+          var sobra = preco - preco*tx - custoVenda;
+          celula = fmtBRL.format(preco)+"<span class='sobra'>sobra "+fmtBRL.format(sobra)+"</span>";
+        }
+        html += "<tr><td class='canal'>"+c.n+"<small>"+c.d+"</small></td><td class='preco'>"+celula+"</td></tr>";
+      });
+    } else {
+      $("custoVenda").textContent = "—"; $("moLinha").textContent = "";
+      CANAIS.forEach(function(c){
+        html += "<tr><td class='canal'>"+c.n+"<small>"+c.d+"</small></td><td class='preco'>—</td></tr>";
+      });
+    }
+    $("tb").innerHTML = html;
+    try{
+      localStorage.setItem("mg_conf", JSON.stringify({
+        ins:$("insumos").value, r:$("rende").value, h:$("horas").value,
+        vh:$("valorHora").value, u:$("unVenda").value}));
+    }catch(e){}
+  }
+  montaAjustes();
+  var ok = false;
+  try{
+    var d = JSON.parse(localStorage.getItem("mg_conf")||"null");
+    if(d){ $("insumos").value=d.ins; $("rende").value=d.r; $("horas").value=d.h;
+           $("valorHora").value=d.vh; $("unVenda").value=d.u; ok = true; }
+  }catch(e){}
+  if(!ok){ $("insumos").value="13,96"; $("rende").value="30"; $("horas").value="0,5";
+           $("valorHora").value="25"; $("unVenda").value="100"; }
+  ["insumos","rende","horas","valorHora","unVenda"].forEach(function(id){
+    $(id).addEventListener("input", function(){
+      document.querySelectorAll("#chipsUn button").forEach(function(x){
+        x.classList.toggle("on", x.dataset.u===$("unVenda").value);
+      });
+      calc();
+    });
+  });
+  document.querySelectorAll("#chipsUn button").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.querySelectorAll("#chipsUn button").forEach(function(x){x.classList.remove("on");});
+      b.classList.add("on");
+      $("unVenda").value = b.dataset.u;
+      calc();
+    });
+  });
+  calc();
+})();
+</script>
+</body>
+</html>

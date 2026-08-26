@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora da Hamburgueria</title>
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{background:#F8F4F0;color:#2E241C;font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:16px;line-height:1.45;padding-bottom:30px}
+  .wrap{max-width:440px;margin:0 auto;padding:0 14px}
+  header{background:#2B1A10;color:#fff;padding:18px 0 16px;border-bottom:3px solid #E8762D}
+  header .wrap{display:flex;align-items:baseline;justify-content:space-between}
+  .logo{font-weight:800;font-size:1.05rem}
+  .logo em{font-style:normal;color:#E8762D}
+  .edicao{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+  h1{font-size:1.05rem;font-weight:700;margin:18px 0 2px}
+  .sub{color:#6B5B4E;font-size:.85rem;margin-bottom:14px}
+  .bloco{background:#fff;border:1px solid #E2D6CB;border-radius:14px;padding:16px;margin-bottom:12px}
+  label{display:block;font-weight:700;font-size:.85rem;margin-bottom:6px}
+  label small{font-weight:500;color:#6B5B4E}
+  input[type=text]{width:100%;padding:13px 12px;font-size:1.05rem;font-family:inherit;
+    color:#2E241C;background:#fff;border:1.5px solid #C9B8A8;border-radius:10px}
+  input:focus{outline:2px solid #E8762D;outline-offset:1px;border-color:#E8762D}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .campo-g{margin-bottom:12px}
+  .campo-g:last-child{margin-bottom:0}
+  .cmv-chip{display:flex;justify-content:space-between;align-items:center;background:#FBEFE3;
+    border:1px solid #E8C9A8;border-radius:10px;padding:10px 12px;margin-top:12px;font-size:.85rem}
+  .cmv-chip b{font-variant-numeric:tabular-nums}
+  .cmv-chip.ruim{background:#FBEAE8;border-color:#E5A79F;color:#C0392B}
+  table.canais{width:100%;border-collapse:collapse;font-size:.9rem}
+  .canais th{background:#3E2617;color:#fff;text-align:left;padding:9px 10px;font-size:.78rem;
+    letter-spacing:.04em;text-transform:uppercase}
+  .canais td{padding:11px 10px;border-bottom:1px solid #E2D6CB;vertical-align:middle}
+  .canais tr:nth-child(even) td{background:#F8F4F0}
+  .canais .preco{text-align:right;font-weight:800;font-size:1.05rem;color:#B85C1A;
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  .canais .sobra{display:block;font-weight:500;font-size:.72rem;color:#0B7D57}
+  .canais .canal small{display:block;color:#6B5B4E;font-weight:500;font-size:.72rem}
+  details{margin-top:10px}
+  summary{cursor:pointer;font-weight:700;font-size:.85rem;color:#B85C1A;list-style:none;padding:6px 0}
+  summary::before{content:"+ ";font-weight:800}
+  details[open] summary::before{content:"− "}
+  .mtab{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px}
+  .mtab td{padding:6px 4px;border-bottom:1px solid #E2D6CB}
+  .mtab input{padding:8px;font-size:.95rem}
+  .nota{color:#8A7A6B;font-size:.75rem;margin:14px 0 20px;text-align:center}
+  a.volta{color:#B85C1A;font-weight:700;font-size:.85rem;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="logo">MARGEM <em>GORDA</em> · HAMBURGUERIA</div>
+    <div class="edicao">Edição 2026</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>Quanto cobrar pelo seu lanche?</h1>
+  <p class="sub">Digite o custo do lanche — os preços certos aparecem por canal, na hora. Cada canal tem seu preço: é assim que se lucra no delivery.</p>
+
+  <div class="bloco">
+    <div class="campo-g">
+      <label for="cmv">Custo do lanche <small>R$ — pão + blend + queijo + salada + molhos (a ficha técnica)</small></label>
+      <input id="cmv" type="text" inputmode="decimal" placeholder="12,55">
+    </div>
+    <div class="grid2">
+      <div>
+        <label for="embB">Embalagem balcão <small>R$</small></label>
+        <input id="embB" type="text" inputmode="decimal" placeholder="0,45">
+      </div>
+      <div>
+        <label for="embD">Embalagem delivery <small>R$ — caixa + sacola + lacre</small></label>
+        <input id="embD" type="text" inputmode="decimal" placeholder="1,50">
+      </div>
+    </div>
+    <div class="cmv-chip" id="chipCmv"><span>CMV no preço de balcão</span><b id="cmvPct">—</b></div>
+  </div>
+
+  <div class="bloco" style="padding:0;overflow:hidden">
+    <table class="canais">
+      <thead><tr><th>Canal</th><th style="text-align:right">Preço no cardápio</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+
+  <div class="bloco">
+    <details>
+      <summary>Ajustar taxas e margens por canal</summary>
+      <table class="mtab" id="mtab"></table>
+    </details>
+  </div>
+
+  <p class="nota">Taxas de ago/2026 (iFood Básico 12%+3,2% · Entrega 23%+3,5% · 99Food promo 3,2%).<br>
+  Régua de sanidade: CMV entre 28% e 35% do preço de balcão.<br>
+  Ficha técnica completa, combos e engenharia de cardápio: na Planilha da Hamburgueria.<br><br>
+  <a class="volta" href="index.html">← todas as calculadoras</a></p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var fmtBRL = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+  var CANAIS = [
+    {n:"Balcão / salão",       d:"maquininha média",         tx:2,    mg:65, delivery:false},
+    {n:"Delivery próprio",     d:"WhatsApp, entrega repassada", tx:1, mg:55, delivery:true},
+    {n:"iFood Básico",         d:"você entrega",             tx:15.2, mg:50, delivery:true},
+    {n:"iFood Entrega",        d:"iFood entrega",            tx:26.5, mg:40, delivery:true},
+    {n:"99Food (promoção)",    d:"comissão zero + 3,2% pgto", tx:3.2, mg:50, delivery:true}
+  ];
+  function num(el){
+    var v = String(el.value||"").trim();
+    if(!v) return 0;
+    if(v.indexOf(",")>-1){ v = v.replace(/\./g,"").replace(",","."); }
+    else if(/^\d{1,3}(\.\d{3})+$/.test(v)){ v = v.replace(/\./g,""); }
+    var n = parseFloat(v);
+    return isFinite(n) ? n : 0;
+  }
+  function p90(x){
+    var fl = Math.floor(x);
+    return (x-fl>0.9) ? fl+1.9 : fl+0.9;
+  }
+  function montaAjustes(){
+    var h = "<tr><td></td><td><b>Taxas %</b></td><td><b>Margem-alvo %</b></td></tr>";
+    CANAIS.forEach(function(c,i){
+      h += "<tr><td>"+c.n+"</td>"+
+        "<td><input type='text' inputmode='decimal' id='tx"+i+"' value='"+String(c.tx).replace(".",",")+"'></td>"+
+        "<td><input type='text' inputmode='decimal' id='mg"+i+"' value='"+c.mg+"'></td></tr>";
+    });
+    $("mtab").innerHTML = h;
+    CANAIS.forEach(function(c,i){
+      $("tx"+i).addEventListener("input", calc);
+      $("mg"+i).addEventListener("input", calc);
+    });
+  }
+  function calc(){
+    var cmv = num($("cmv")), eb = num($("embB")), ed = num($("embD"));
+    var html = "", precoBalcao = null;
+    CANAIS.forEach(function(c,i){
+      var tx = num($("tx"+i))/100, mg = num($("mg"+i))/100;
+      var custos = cmv + (c.delivery ? ed : eb);
+      var div = 1-tx-mg;
+      var celula;
+      if(cmv<=0){ celula = "—"; }
+      else if(div<=0){ celula = "inviável"; }
+      else{
+        var preco = p90(custos/div);
+        if(i===0) precoBalcao = preco;
+        var sobra = preco - preco*tx - custos;
+        celula = fmtBRL.format(preco)+"<span class='sobra'>sobra "+fmtBRL.format(sobra)+"</span>";
+      }
+      html += "<tr><td class='canal'>"+c.n+"<small>"+c.d+"</small></td><td class='preco'>"+celula+"</td></tr>";
+    });
+    $("tb").innerHTML = html;
+    var chip = $("chipCmv");
+    if(cmv>0 && precoBalcao){
+      var pct = cmv/precoBalcao;
+      $("cmvPct").textContent = (pct*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";
+      chip.classList.toggle("ruim", pct>0.35);
+    } else { $("cmvPct").textContent = "—"; chip.classList.remove("ruim"); }
+    try{
+      localStorage.setItem("mg_hamb", JSON.stringify({cmv:$("cmv").value, eb:$("embB").value, ed:$("embD").value}));
+    }catch(e){}
+  }
+  montaAjustes();
+  var ok = false;
+  try{
+    var d = JSON.parse(localStorage.getItem("mg_hamb")||"null");
+    if(d){ $("cmv").value=d.cmv; $("embB").value=d.eb; $("embD").value=d.ed; ok = true; }
+  }catch(e){}
+  if(!ok){ $("cmv").value="12,55"; $("embB").value="0,45"; $("embD").value="1,50"; }
+  ["cmv","embB","embD"].forEach(function(id){ $(id).addEventListener("input", calc); });
+  calc();
+})();
+</script>
+</body>
+</html>
