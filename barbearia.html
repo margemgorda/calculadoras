@@ -1,0 +1,347 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora da Barbearia</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&display=swap">
+<style>
+  /* Identidade Margem Gorda Barbearia: grafite + dourado, tema único assumido */
+  *{box-sizing:border-box; margin:0}
+  body{
+    background:#15181B; color:#E8E4DC;
+    font-family:"Archivo",-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:16px; line-height:1.45;
+    padding-bottom:180px;
+  }
+  .wrap{max-width:440px; margin:0 auto; padding:0 14px}
+  header{background:#23272B; padding:18px 0 16px; border-bottom:3px solid #C9973B}
+  header .wrap{display:flex; align-items:baseline; justify-content:space-between}
+  .logo{font-weight:800; font-size:1.1rem; color:#FFF}
+  .logo em{font-style:normal; color:#C9973B}
+  .edicao{font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:#8F8A80}
+  h1{font-size:1.05rem; font-weight:700; margin:18px 0 2px; color:#FFF}
+  .sub{color:#9C978D; font-size:.85rem; margin-bottom:14px}
+  .bloco{background:#1E2226; border:1px solid #33383D; border-radius:14px;
+    padding:16px; margin-bottom:12px}
+  .bloco-t{font-size:.72rem; letter-spacing:.09em; text-transform:uppercase;
+    color:#C9973B; font-weight:800; margin-bottom:12px}
+  label{display:block; font-weight:700; font-size:.85rem; margin-bottom:6px; color:#E8E4DC}
+  label small{font-weight:500; color:#9C978D}
+  input[type=text]{
+    width:100%; padding:13px 12px; font-size:1.05rem; font-family:inherit;
+    color:#F2EFE8; background:#15181B; border:1.5px solid #3E444A;
+    border-radius:10px}
+  input:focus{outline:2px solid #C9973B; outline-offset:1px; border-color:#C9973B}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px}
+  .campo-g{margin-bottom:12px}
+  .campo-g:last-child{margin-bottom:0}
+  details{margin-top:10px}
+  summary{cursor:pointer; font-weight:700; font-size:.85rem; color:#D9A94C;
+    list-style:none; padding:6px 0}
+  summary::before{content:"+ "; font-weight:800}
+  details[open] summary::before{content:"− "}
+  .chips{display:flex; gap:8px; margin-top:8px}
+  .chips button{flex:1; padding:10px 0; border-radius:10px; border:1.5px solid #3E444A;
+    background:#15181B; color:#E8E4DC; font-family:inherit; font-weight:700;
+    font-size:.9rem; cursor:pointer}
+  .chips button.on{background:#C9973B; border-color:#C9973B; color:#1B1508}
+  .chips button:focus-visible{outline:2px solid #C9973B; outline-offset:2px}
+  .hora-chip{display:flex; justify-content:space-between; align-items:center;
+    background:#2A2419; border:1px solid #4A3D22; border-radius:10px;
+    padding:11px 12px; margin-top:12px; font-size:.88rem; color:#E0C68A}
+  .hora-chip b{font-size:1.05rem; color:#D9A94C; font-variant-numeric:tabular-nums}
+  .resultado{position:fixed; left:0; right:0; bottom:0; background:#23272B;
+    border-top:3px solid #C9973B; box-shadow:0 -6px 24px rgba(0,0,0,.5)}
+  .resultado .wrap{padding:12px 14px 14px}
+  .res-linha{display:flex; align-items:flex-end; justify-content:space-between; gap:10px}
+  .res-rotulo{font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:#8F8A80}
+  .res-preco{font-size:2.1rem; font-weight:800; line-height:1.05;
+    font-variant-numeric:tabular-nums; color:#D9A94C}
+  .res-exato{font-size:.76rem; color:#8F8A80; font-variant-numeric:tabular-nums}
+  .res-sobra{text-align:right; font-size:.8rem; color:#B8B3A8}
+  .res-sobra b{font-size:1.05rem; color:#3FBF8F; font-variant-numeric:tabular-nums}
+  .aviso{border-radius:10px; padding:9px 12px; font-size:.83rem; font-weight:600;
+    margin-top:8px; display:none; background:#3A1B16; color:#E06A5B}
+  .aviso.mostra{display:block}
+  .prova{width:100%; border-collapse:collapse; font-size:.88rem; margin-top:6px}
+  .prova td{padding:7px 0; border-bottom:1px solid #33383D; color:#CBC6BB}
+  .prova td:last-child{text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:#E8E4DC}
+  .prova tr.total td{border-bottom:none; color:#3FBF8F; font-weight:800; font-size:.95rem}
+  .meta-box{background:#1B2B24; border:1px solid #2C4A3C; border-radius:10px;
+    padding:11px 12px; margin-top:10px; font-size:.84rem; color:#9FD9BF}
+  .meta-box b{color:#3FBF8F}
+  .nota{color:#8F8A80; font-size:.75rem; margin:14px 0 20px; text-align:center}
+  .reset{width:100%; padding:11px; border-radius:10px; border:1.5px solid #3E444A;
+    background:none; color:#9C978D; font-family:inherit; font-weight:700; cursor:pointer;
+    margin-bottom:8px}
+</style>
+
+<noscript>
+  <div style="background:#3A1B16;color:#E06A5B;padding:14px;text-align:center;font-weight:700">
+    Para a calculadora funcionar, abra este arquivo no NAVEGADOR (Safari ou Chrome).
+    Na pré-visualização de arquivos os cálculos não rodam: toque em Compartilhar e escolha "Abrir no Safari".
+  </div>
+</noscript>
+
+<header>
+  <div class="wrap">
+    <div class="logo">MARGEM <em>GORDA</em> · BARBEARIA</div>
+    <div class="edicao">Edição 2026</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>Quanto cobrar pelo seu serviço?</h1>
+  <p class="sub">Configure sua estrutura uma vez (fica salva no celular). Depois é só ajustar o serviço — o preço aparece embaixo, na hora.</p>
+
+  <div class="bloco">
+    <div class="bloco-t">1 · Sua estrutura</div>
+    <div class="campo-g">
+      <label for="fixos">Custos fixos do mês <small>R$ — aluguel, luz, sistema, MEI e o SEU salário</small></label>
+      <input id="fixos" type="text" inputmode="decimal" placeholder="7.212">
+    </div>
+    <details id="detFixos">
+      <summary>Não sabe o total? Detalhe aqui que eu somo</summary>
+      <div class="grid2" style="margin-top:8px">
+        <div><label><small>Aluguel (c/ IPTU)</small></label><input class="fx" id="fxAluguel" type="text" inputmode="decimal"></div>
+        <div><label><small>Água e luz</small></label><input class="fx" id="fxLuz" type="text" inputmode="decimal"></div>
+        <div><label><small>Sistema de agendamento</small></label><input class="fx" id="fxSistema" type="text" inputmode="decimal"></div>
+        <div><label><small>DAS do MEI</small></label><input class="fx" id="fxMei" type="text" inputmode="decimal"></div>
+        <div><label><small>Marketing</small></label><input class="fx" id="fxMkt" type="text" inputmode="decimal"></div>
+        <div><label><small>Limpeza e consumo</small></label><input class="fx" id="fxLimp" type="text" inputmode="decimal"></div>
+        <div><label><small>Internet / telefone</small></label><input class="fx" id="fxNet" type="text" inputmode="decimal"></div>
+        <div><label><small>SEU salário (pró-labore)</small></label><input class="fx" id="fxPro" type="text" inputmode="decimal"></div>
+      </div>
+    </details>
+    <div class="grid3" style="margin-top:12px">
+      <div><label for="horas"><small>Horas abertas /semana</small></label><input id="horas" type="text" inputmode="decimal" placeholder="54"></div>
+      <div><label for="cadeiras"><small>Cadeiras ativas</small></label><input id="cadeiras" type="text" inputmode="decimal" placeholder="1"></div>
+      <div><label for="ocup"><small>Ocupação %</small></label><input id="ocup" type="text" inputmode="decimal" placeholder="60"></div>
+    </div>
+    <div class="chips" id="chipsOcup">
+      <button type="button" data-o="50">50%</button>
+      <button type="button" data-o="60" class="on">60%</button>
+      <button type="button" data-o="70">70%</button>
+      <button type="button" data-o="80">80%</button>
+    </div>
+    <div class="hora-chip">
+      <span>Sua hora de cadeira custa</span>
+      <b id="horaCusto">—</b>
+    </div>
+  </div>
+
+  <div class="bloco">
+    <div class="bloco-t">2 · O serviço</div>
+    <div class="campo-g">
+      <label for="dur">Duração <small>minutos de cadeira, com a limpeza entre clientes</small></label>
+      <input id="dur" type="text" inputmode="decimal" placeholder="40">
+      <div class="chips" id="chipsDur">
+        <button type="button" data-d="20">20</button>
+        <button type="button" data-d="30">30</button>
+        <button type="button" data-d="40" class="on">40</button>
+        <button type="button" data-d="60">60</button>
+      </div>
+    </div>
+    <div class="grid2 campo-g">
+      <div>
+        <label for="insumos">Insumos <small>R$/atend.</small></label>
+        <input id="insumos" type="text" inputmode="decimal" placeholder="2,35">
+      </div>
+      <div>
+        <label for="cartao">Maquininha <small>% média</small></label>
+        <input id="cartao" type="text" inputmode="decimal" placeholder="2">
+      </div>
+    </div>
+    <div class="campo-g">
+      <label for="comissao">Comissão do barbeiro <small>% — sozinho use 0</small></label>
+      <input id="comissao" type="text" inputmode="decimal" placeholder="0">
+      <div class="chips" id="chipsCom">
+        <button type="button" data-c="0" class="on">0%</button>
+        <button type="button" data-c="40">40%</button>
+        <button type="button" data-c="45">45%</button>
+        <button type="button" data-c="50">50%</button>
+      </div>
+    </div>
+    <div class="campo-g">
+      <label for="margem">Margem além dos custos <small>% — seu salário já está nos fixos</small></label>
+      <input id="margem" type="text" inputmode="decimal" placeholder="15">
+      <div class="chips" id="chipsMar">
+        <button type="button" data-m="10">10%</button>
+        <button type="button" data-m="15" class="on">15%</button>
+        <button type="button" data-m="20">20%</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bloco">
+    <div class="bloco-t">Prova real</div>
+    <table class="prova" id="prova"></table>
+    <div class="meta-box" id="metaBox"></div>
+  </div>
+
+  <button type="button" class="reset" id="btnReset">Restaurar exemplo</button>
+  <p class="nota">Faixas de mercado 2026: corte interior R$ 25–40 · capital R$ 45–80 · premium R$ 80+.<br>
+  Combos, clube de assinatura e revenda: na Planilha da Barbearia (Excel).</p>
+</div>
+
+<div class="resultado">
+  <div class="wrap">
+    <div class="res-linha">
+      <div>
+        <div class="res-rotulo">Preço sugerido</div>
+        <div class="res-preco" id="preco90">—</div>
+        <div class="res-exato" id="precoExato"></div>
+      </div>
+      <div class="res-sobra" id="resSobra"></div>
+    </div>
+    <div class="aviso" id="avErro"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var fmtBRL = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+  var fmtPct = function(x){ return (x*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%"; };
+
+  function num(el){
+    var v = String(el.value||"").trim();
+    if(!v) return 0;
+    if(v.indexOf(",")>-1){ v = v.replace(/\./g,"").replace(",","."); }
+    else if(/^\d{1,3}(\.\d{3})+$/.test(v)){ v = v.replace(/\./g,""); }
+    var n = parseFloat(v);
+    return isFinite(n) ? n : 0;
+  }
+  function pctv(el){ return num(el)/100; }
+
+  var CAMPOS = ["fixos","horas","cadeiras","ocup","dur","insumos","cartao","comissao","margem"];
+  var FX = ["fxAluguel","fxLuz","fxSistema","fxMei","fxMkt","fxLimp","fxNet","fxPro"];
+
+  function somaFixos(){
+    var s = 0, algum = false;
+    FX.forEach(function(id){ var v = num($(id)); if(v>0){ algum = true; } s += v; });
+    if(algum){
+      $("fixos").value = s.toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:2});
+    }
+  }
+
+  function calc(){
+    var fixos = num($("fixos"));
+    var horasSem = num($("horas")), cadeiras = num($("cadeiras")), ocup = pctv($("ocup"));
+    var horaMes = horasSem*4.33;
+    var vendaveis = horaMes*cadeiras*ocup;
+    var hora = vendaveis>0 ? fixos/vendaveis : 0;
+    $("horaCusto").textContent = hora>0 ? fmtBRL.format(hora)+"/h" : "—";
+
+    var dur = num($("dur")), insumos = num($("insumos"));
+    var cartao = pctv($("cartao")), com = pctv($("comissao")), marg = pctv($("margem"));
+    var avE = $("avErro");
+    avE.classList.remove("mostra");
+
+    if(fixos<=0 || vendaveis<=0 || dur<=0){
+      $("preco90").textContent="—"; $("precoExato").textContent="preencha estrutura e duração";
+      $("resSobra").innerHTML=""; $("prova").innerHTML=""; $("metaBox").innerHTML=""; salva(); return;
+    }
+    var div = 1-cartao-com-marg;
+    if(div<=0){
+      $("preco90").textContent="—"; $("precoExato").textContent="";
+      $("resSobra").innerHTML="";
+      avE.textContent="Inviável: maquininha + comissão + margem somam 100% ou mais. Reduza a comissão ou a margem.";
+      avE.classList.add("mostra"); $("prova").innerHTML=""; $("metaBox").innerHTML=""; salva(); return;
+    }
+    var cadeira = dur/60*hora;
+    var custoTotal = cadeira+insumos;
+    var exato = custoTotal/div;
+    var fl = Math.floor(exato);
+    var p90 = (exato-fl>0.9) ? fl+1.9 : fl+0.9;
+
+    var vCartao = p90*cartao, vCom = p90*com;
+    var sobra = p90-vCartao-vCom-custoTotal;
+
+    $("preco90").textContent = fmtBRL.format(p90);
+    $("precoExato").textContent = "mínimo exato: "+fmtBRL.format(exato);
+    $("resSobra").innerHTML = "sobra por atendimento<br><b>"+fmtBRL.format(sobra)+"</b>";
+
+    var html = "<tr><td>Preço no painel</td><td>"+fmtBRL.format(p90)+"</td></tr>";
+    html += "<tr><td>(−) Cadeira: "+dur+" min × "+fmtBRL.format(hora)+"/h</td><td>"+fmtBRL.format(cadeira)+"</td></tr>";
+    html += "<tr><td>(−) Insumos</td><td>"+fmtBRL.format(insumos)+"</td></tr>";
+    if(vCom>0) html += "<tr><td>(−) Comissão ("+fmtPct(com)+")</td><td>"+fmtBRL.format(vCom)+"</td></tr>";
+    if(vCartao>0) html += "<tr><td>(−) Maquininha</td><td>"+fmtBRL.format(vCartao)+"</td></tr>";
+    html += "<tr class='total'><td>= Sobra além de TODOS os custos</td><td>"+fmtBRL.format(sobra)+"</td></tr>";
+    $("prova").innerHTML = html;
+
+    var contribuicao = p90-vCartao-vCom-insumos;
+    if(contribuicao>0){
+      var metaMes = Math.ceil(fixos/contribuicao);
+      var metaDia = Math.ceil(metaMes/26);
+      var capacidade = Math.floor(vendaveis*60/dur);
+      var cabe = metaMes<=capacidade;
+      $("metaBox").innerHTML =
+        "Vendendo só este serviço a "+fmtBRL.format(p90)+": <b>"+metaMes+
+        " atendimentos/mês</b> (~"+metaDia+" por dia útil) pagam a casa E o seu salário. "+
+        (cabe ? "Cabem na sua agenda prevista ("+capacidade+")."
+              : "<b>Não cabem</b> na agenda prevista ("+capacidade+") — suba o preço, a ocupação ou corte fixos.");
+    } else {
+      $("metaBox").innerHTML = "";
+    }
+    salva();
+  }
+
+  function salva(){
+    try{
+      var d = {};
+      CAMPOS.concat(FX).forEach(function(id){ d[id] = $(id).value; });
+      localStorage.setItem("mg_barb", JSON.stringify(d));
+    }catch(e){}
+  }
+  function restaura(){
+    try{
+      var d = JSON.parse(localStorage.getItem("mg_barb")||"null");
+      if(!d) return false;
+      CAMPOS.concat(FX).forEach(function(id){ if(d[id]!==undefined) $(id).value = d[id]; });
+      return true;
+    }catch(e){ return false; }
+  }
+  function exemplo(){
+    $("fixos").value = "7.212";
+    $("fxAluguel").value="2.640"; $("fxLuz").value="500"; $("fxSistema").value="90";
+    $("fxMei").value="82"; $("fxMkt").value="150"; $("fxLimp").value="150";
+    $("fxNet").value="100"; $("fxPro").value="3.500";
+    $("horas").value="54"; $("cadeiras").value="1"; $("ocup").value="60";
+    $("dur").value="40"; $("insumos").value="2,35"; $("cartao").value="2";
+    $("comissao").value="0"; $("margem").value="15";
+    sincChips();
+  }
+  function sincChips(){
+    [["chipsOcup","o","ocup"],["chipsDur","d","dur"],["chipsCom","c","comissao"],["chipsMar","m","margem"]]
+      .forEach(function(cfg){
+        document.querySelectorAll("#"+cfg[0]+" button").forEach(function(b){
+          b.classList.toggle("on", b.dataset[cfg[1]]===String(num($(cfg[2]))));
+        });
+      });
+  }
+
+  CAMPOS.forEach(function(id){ $(id).addEventListener("input", function(){ sincChips(); calc(); }); });
+  FX.forEach(function(id){ $(id).addEventListener("input", function(){ somaFixos(); calc(); }); });
+
+  function ligaChips(grupo, attr, campo){
+    document.querySelectorAll("#"+grupo+" button").forEach(function(b){
+      b.addEventListener("click", function(){
+        document.querySelectorAll("#"+grupo+" button").forEach(function(x){ x.classList.remove("on"); });
+        b.classList.add("on");
+        $(campo).value = b.dataset[attr];
+        calc();
+      });
+    });
+  }
+  ligaChips("chipsOcup","o","ocup");
+  ligaChips("chipsDur","d","dur");
+  ligaChips("chipsCom","c","comissao");
+  ligaChips("chipsMar","m","margem");
+
+  $("btnReset").addEventListener("click", function(){ exemplo(); calc(); });
+
+  if(restaura()){ sincChips(); calc(); }
+  else { exemplo(); calc(); }
+})();
+</script>

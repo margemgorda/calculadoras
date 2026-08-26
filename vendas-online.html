@@ -1,0 +1,413 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora Margem Gorda</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&display=swap">
+<style>
+  :root{
+    --ink:#22303C; --ink-2:#5A6B7B; --ground:#F1F5F9; --card:#FFFFFF;
+    --brand:#132A44; --brand-2:#1E3A5F; --verde:#0E9F6E; --verde-escuro:#0B7D57;
+    --ouro:#B57B06; --ouro-bg:#FBF3E0; --verm:#C0392B; --verm-bg:#FBEAE8;
+    --ok-bg:#EAF7F1; --linha:#D7DEE6; --campo:#FFFFFF; --campo-borda:#C4CFD9;
+    --chip:#E8EEF4; --header-ink:#FFFFFF;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#E3EBF3; --ink-2:#94A6B8; --ground:#0E1826; --card:#17273B;
+      --brand:#0B1A2C; --brand-2:#1E3A5F; --verde:#2BBd8B; --verde-escuro:#1FA475;
+      --ouro:#E0A83A; --ouro-bg:#33290F; --verm:#E06A5B; --verm-bg:#3A1B16;
+      --ok-bg:#12362A; --linha:#2A3B50; --campo:#101E30; --campo-borda:#33465C;
+      --chip:#22344A; --header-ink:#E3EBF3;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#E3EBF3; --ink-2:#94A6B8; --ground:#0E1826; --card:#17273B;
+    --brand:#0B1A2C; --brand-2:#1E3A5F; --verde:#2BBD8B; --verde-escuro:#1FA475;
+    --ouro:#E0A83A; --ouro-bg:#33290F; --verm:#E06A5B; --verm-bg:#3A1B16;
+    --ok-bg:#12362A; --linha:#2A3B50; --campo:#101E30; --campo-borda:#33465C;
+    --chip:#22344A; --header-ink:#E3EBF3;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{
+    background:var(--ground); color:var(--ink);
+    font-family:"Archivo",-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:16px; line-height:1.45;
+    padding-bottom:170px;
+  }
+  .wrap{max-width:440px; margin:0 auto; padding:0 14px}
+  header{background:var(--brand); color:var(--header-ink); padding:18px 0 16px;
+    border-bottom:3px solid var(--verde)}
+  header .wrap{display:flex; align-items:baseline; justify-content:space-between}
+  .logo{font-weight:800; font-size:1.15rem; letter-spacing:.01em}
+  .logo em{font-style:normal; color:var(--verde)}
+  .edicao{font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; opacity:.75}
+  h1{font-size:1.05rem; font-weight:700; margin:18px 0 2px}
+  .sub{color:var(--ink-2); font-size:.85rem; margin-bottom:14px}
+  .bloco{background:var(--card); border:1px solid var(--linha); border-radius:14px;
+    padding:16px; margin-bottom:12px}
+  label{display:block; font-weight:700; font-size:.85rem; margin-bottom:6px}
+  label small{font-weight:500; color:var(--ink-2)}
+  select,input[type=text],input[type=number]{
+    width:100%; padding:13px 12px; font-size:1.05rem; font-family:inherit;
+    color:var(--ink); background:var(--campo); border:1.5px solid var(--campo-borda);
+    border-radius:10px; -moz-appearance:textfield}
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
+  select:focus,input:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:var(--verde)}
+  .taxa-chip{display:flex; justify-content:space-between; align-items:center; gap:8px;
+    background:var(--chip); border-radius:10px; padding:10px 12px; margin-top:10px;
+    font-size:.85rem}
+  .taxa-chip b{font-variant-numeric:tabular-nums}
+  .link-btn{background:none; border:none; color:var(--verde-escuro); font-weight:700;
+    font-size:.85rem; font-family:inherit; cursor:pointer; padding:4px; text-decoration:underline}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px}
+  .campo-g{margin-bottom:12px}
+  .campo-g:last-child{margin-bottom:0}
+  details{margin-top:10px}
+  summary{cursor:pointer; font-weight:700; font-size:.85rem; color:var(--verde-escuro);
+    list-style:none; padding:6px 0}
+  summary::before{content:"+ "; font-weight:800}
+  details[open] summary::before{content:"− "}
+  .chips{display:flex; gap:8px; margin-top:8px}
+  .chips button{flex:1; padding:10px 0; border-radius:10px; border:1.5px solid var(--campo-borda);
+    background:var(--campo); color:var(--ink); font-family:inherit; font-weight:700;
+    font-size:.95rem; cursor:pointer}
+  .chips button.on{background:var(--verde); border-color:var(--verde); color:#fff}
+  .chips button:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
+  /* resultado fixo */
+  .resultado{position:fixed; left:0; right:0; bottom:0; background:var(--brand);
+    color:var(--header-ink); border-top:3px solid var(--verde);
+    box-shadow:0 -6px 24px rgba(0,0,0,.18)}
+  .resultado .wrap{padding:12px 14px 14px}
+  .res-linha{display:flex; align-items:flex-end; justify-content:space-between; gap:10px}
+  .res-rotulo{font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; opacity:.8}
+  .res-preco{font-size:2.1rem; font-weight:800; line-height:1.05;
+    font-variant-numeric:tabular-nums; color:var(--verde)}
+  .res-exato{font-size:.78rem; opacity:.75; font-variant-numeric:tabular-nums}
+  .res-lucro{text-align:right; font-size:.82rem; opacity:.95}
+  .res-lucro b{font-size:1.05rem; font-variant-numeric:tabular-nums}
+  .aviso{border-radius:10px; padding:9px 12px; font-size:.83rem; font-weight:600;
+    margin-top:8px; display:none}
+  .aviso.mostra{display:block}
+  .aviso.faixa{background:var(--ouro-bg); color:var(--ouro)}
+  .aviso.erro{background:var(--verm-bg); color:var(--verm)}
+  .aviso button{margin-top:6px; width:100%; padding:9px; border-radius:8px; border:none;
+    background:var(--ouro); color:#fff; font-family:inherit; font-weight:700; cursor:pointer}
+  /* prova real */
+  .prova{width:100%; border-collapse:collapse; font-size:.88rem; margin-top:6px}
+  .prova td{padding:7px 0; border-bottom:1px solid var(--linha)}
+  .prova td:last-child{text-align:right; font-variant-numeric:tabular-nums; font-weight:700}
+  .prova tr.total td{border-bottom:none; color:var(--verde-escuro); font-weight:800; font-size:.95rem}
+  .nota{color:var(--ink-2); font-size:.75rem; margin:14px 0 20px; text-align:center}
+  .reset{width:100%; padding:11px; border-radius:10px; border:1.5px solid var(--campo-borda);
+    background:none; color:var(--ink-2); font-family:inherit; font-weight:700; cursor:pointer;
+    margin-bottom:8px}
+  @media (prefers-reduced-motion: no-preference){
+    .res-preco{transition:color .15s}
+  }
+</style>
+
+<noscript>
+  <div style="background:#FBEAE8;color:#C0392B;padding:14px;text-align:center;font-weight:700">
+    Para a calculadora funcionar, abra este arquivo no NAVEGADOR (Safari ou Chrome).
+    Na pré-visualização de arquivos os cálculos não rodam: toque em Compartilhar e escolha "Abrir no Safari".
+  </div>
+</noscript>
+
+<header>
+  <div class="wrap">
+    <div class="logo">MARGEM <em>GORDA</em></div>
+    <div class="edicao">Edição 2026</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>Quanto cobrar por este produto?</h1>
+  <p class="sub">Escolha o canal, digite seus custos e a margem — o preço certo aparece embaixo, na hora.</p>
+
+  <div class="bloco">
+    <label for="canal">Onde você vai vender?</label>
+    <select id="canal"></select>
+    <div class="taxa-chip">
+      <span id="taxaResumo">—</span>
+      <button type="button" class="link-btn" id="btnAjustar">ajustar</button>
+    </div>
+    <details id="detAjuste">
+      <summary>Taxas deste canal (edite se mudou)</summary>
+      <div class="grid3" style="margin-top:8px">
+        <div><label for="tCom"><small>Comissão %</small></label><input id="tCom" type="text" inputmode="decimal"></div>
+        <div><label for="tExt"><small>Extras %</small></label><input id="tExt" type="text" inputmode="decimal"></div>
+        <div><label for="tFix"><small>Taxa fixa R$</small></label><input id="tFix" type="text" inputmode="decimal"></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="bloco">
+    <div class="grid2 campo-g">
+      <div>
+        <label for="custo">Custo do produto <small>R$</small></label>
+        <input id="custo" type="text" inputmode="decimal" placeholder="18,00">
+      </div>
+      <div>
+        <label for="emb">Embalagem <small>R$</small></label>
+        <input id="emb" type="text" inputmode="decimal" placeholder="0">
+      </div>
+    </div>
+    <details>
+      <summary>Mais custos (frete, anúncio, outros)</summary>
+      <div class="grid3" style="margin-top:8px">
+        <div><label for="frete"><small>Frete que você paga</small></label><input id="frete" type="text" inputmode="decimal" placeholder="0"></div>
+        <div><label for="cpa"><small>Anúncio por venda</small></label><input id="cpa" type="text" inputmode="decimal" placeholder="0"></div>
+        <div><label for="outros"><small>Outros</small></label><input id="outros" type="text" inputmode="decimal" placeholder="0"></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="bloco">
+    <div class="grid2">
+      <div>
+        <label for="imposto">Imposto <small>% — MEI use 0</small></label>
+        <input id="imposto" type="text" inputmode="decimal" placeholder="0">
+      </div>
+      <div>
+        <label for="margem">Margem desejada <small>%</small></label>
+        <input id="margem" type="text" inputmode="decimal" placeholder="25">
+      </div>
+    </div>
+    <div class="chips" id="chipsMargem">
+      <button type="button" data-m="15">15%</button>
+      <button type="button" data-m="20">20%</button>
+      <button type="button" data-m="25" class="on">25%</button>
+      <button type="button" data-m="30">30%</button>
+    </div>
+  </div>
+
+  <div class="bloco">
+    <label>Prova real <small>no preço sugerido</small></label>
+    <table class="prova" id="prova"></table>
+  </div>
+
+  <button type="button" class="reset" id="btnReset">Limpar tudo</button>
+  <p class="nota">Taxas conferidas em agosto/2026 — confirme no painel do seu canal e ajuste no botão "ajustar".<br>
+  A versão completa (lote, comparador, DRE) está na Calculadora Margem Gorda para Excel.</p>
+</div>
+
+<div class="resultado">
+  <div class="wrap">
+    <div class="res-linha">
+      <div>
+        <div class="res-rotulo">Preço sugerido</div>
+        <div class="res-preco" id="preco90">—</div>
+        <div class="res-exato" id="precoExato"></div>
+      </div>
+      <div class="res-lucro" id="resLucro"></div>
+    </div>
+    <div class="aviso faixa" id="avFaixa"></div>
+    <div class="aviso erro" id="avErro"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var INF = Infinity;
+  // [nome, comissão, extras, taxa fixa, faixa mín, faixa máx, grupo de faixas]
+  var CANAIS = [
+    ["Shopee — até R$ 79,99",            .20, 0,    4,    0,   79.99, "shopee"],
+    ["Shopee — R$ 80 a 99,99",           .14, 0,    16,   80,  99.99, "shopee"],
+    ["Shopee — R$ 100 a 199,99",         .14, 0,    20,   100, 199.99,"shopee"],
+    ["Shopee — R$ 200 ou mais",          .14, 0,    26,   200, INF,   "shopee"],
+    ["Mercado Livre Clássico (até R$ 78,99)", .12, 0, 6.5, 0,  78.99, "mlc"],
+    ["Mercado Livre Clássico (R$ 79 ou mais)",.12, 0, 0,   79, INF,   "mlc"],
+    ["Mercado Livre Premium (até R$ 78,99)",  .17, 0, 6.5, 0,  78.99, "mlp"],
+    ["Mercado Livre Premium (R$ 79 ou mais)", .17, 0, 0,   79, INF,   "mlp"],
+    ["TikTok Shop — até R$ 49,99",       .10, .06,  0,    0,   49.99, "tiktok"],
+    ["TikTok Shop — R$ 50 ou mais",      .06, .06,  6,    50,  INF,   "tiktok"],
+    ["Amazon — plano Individual",        .13, 0,    2,    0,   INF,   null],
+    ["Amazon — plano Profissional",      .13, 0,    0,    0,   INF,   null],
+    ["Instagram/WhatsApp — Pix",         0,   0,    0,    0,   INF,   null],
+    ["Instagram/WhatsApp — crédito à vista", 0, .035, 0,  0,   INF,   null],
+    ["Instagram/WhatsApp — link 12x",    0,   .15,  0,    0,   INF,   null],
+    ["iFood — Plano Básico",             .12, .032, 0,    0,   INF,   null],
+    ["iFood — Plano Entrega",            .23, .035, 0,    0,   INF,   null],
+    ["Loja própria (gateway)",           0,   .0499,1,    0,   INF,   null],
+    ["Kiwify (produto digital)",         .0899,0,   2.49, 0,   INF,   null],
+    ["Hotmart (produto digital)",        .099,0,    2.49, 0,   INF,   null],
+    ["Canal personalizado",              0,   0,    0,    0,   INF,   null]
+  ];
+
+  var $ = function(id){ return document.getElementById(id); };
+  var fmtBRL = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+  var fmtPct = function(x){ return (x*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%"; };
+
+  function num(el){
+    var v = String(el.value||"").trim();
+    if(!v) return 0;
+    if(v.indexOf(",")>-1){ v = v.replace(/\./g,"").replace(",","."); }          // 1.234,56
+    else if(/^\d{1,3}(\.\d{3})+$/.test(v)){ v = v.replace(/\./g,""); }          // 7.212 (milhar)
+    var n = parseFloat(v);
+    return isFinite(n) ? n : 0;
+  }
+  function pct(el){ return num(el)/100; }
+
+  var sel = $("canal");
+  CANAIS.forEach(function(c,i){
+    var o = document.createElement("option");
+    o.value = i; o.textContent = c[0];
+    sel.appendChild(o);
+  });
+
+  function carregaCanal(){
+    var c = CANAIS[+sel.value];
+    $("tCom").value = String(c[1]*100).replace(".",",");
+    $("tExt").value = String(c[2]*100).replace(".",",");
+    $("tFix").value = String(c[3]).replace(".",",");
+    calc();
+  }
+
+  function resumoTaxas(){
+    var com=pct($("tCom")), ext=pct($("tExt")), fix=num($("tFix"));
+    var partes=[];
+    if(com>0) partes.push(fmtPct(com));
+    if(ext>0) partes.push("+ "+fmtPct(ext));
+    if(fix>0) partes.push("+ "+fmtBRL.format(fix)+"/item");
+    if(!partes.length) partes.push("sem taxas");
+    var c=CANAIS[+sel.value];
+    var faixa = (c[5]===INF && c[4]===0) ? "" :
+      (c[5]===INF ? " · a partir de "+fmtBRL.format(c[4]) :
+       " · faixa até "+fmtBRL.format(c[5]));
+    $("taxaResumo").innerHTML = "O canal cobra: <b>"+partes.join(" ")+"</b>"+faixa;
+  }
+
+  function faixaCerta(grupo, preco){
+    if(!grupo) return null;
+    for(var i=0;i<CANAIS.length;i++){
+      var c=CANAIS[i];
+      if(c[6]===grupo && preco>=c[4] && preco<=c[5]) return i;
+    }
+    return null;
+  }
+
+  function calc(){
+    resumoTaxas();
+    var com=pct($("tCom")), ext=pct($("tExt")), fix=num($("tFix"));
+    var imp=pct($("imposto")), marg=pct($("margem"));
+    var custos = num($("custo"))+num($("emb"))+num($("frete"))+num($("cpa"))+num($("outros"))+fix;
+    var div = 1-com-ext-imp-marg;
+    var avF=$("avFaixa"), avE=$("avErro");
+    avF.classList.remove("mostra"); avE.classList.remove("mostra");
+
+    if(num($("custo"))<=0){
+      $("preco90").textContent="—"; $("precoExato").textContent="digite o custo do produto";
+      $("resLucro").innerHTML=""; $("prova").innerHTML=""; salva(); return;
+    }
+    if(div<=0){
+      $("preco90").textContent="—"; $("precoExato").textContent="";
+      $("resLucro").innerHTML="";
+      avE.textContent="Inviável: comissão + imposto + margem somam 100% ou mais. Reduza a margem ou troque de canal.";
+      avE.classList.add("mostra"); $("prova").innerHTML=""; salva(); return;
+    }
+    var exato = custos/div;
+    var fl = Math.floor(exato);
+    var p90 = (exato-fl>0.9) ? fl+1.9 : fl+0.9;
+
+    $("preco90").textContent = fmtBRL.format(p90);
+    $("precoExato").textContent = "mínimo exato: "+fmtBRL.format(exato);
+
+    // prova real no preço ,90
+    var vCom=p90*com, vExt=p90*ext, vImp=p90*imp;
+    var meusCustos = custos-fix;
+    var lucro = p90-vCom-vExt-vImp-fix-meusCustos;
+    var margReal = lucro/p90;
+    $("resLucro").innerHTML = "lucro por venda<br><b>"+fmtBRL.format(lucro)+"</b> ("+fmtPct(margReal)+")";
+
+    var linhas = [
+      ["Preço de venda", p90],
+      ["(−) Comissão", vCom],
+      ["(−) Extras do canal", vExt],
+      ["(−) Taxa fixa", fix],
+      ["(−) Imposto", vImp],
+      ["(−) Seus custos", meusCustos]
+    ];
+    var html="";
+    linhas.forEach(function(l){
+      if(l[0]!=="Preço de venda" && l[1]===0) return;
+      html+="<tr><td>"+l[0]+"</td><td>"+fmtBRL.format(l[1])+"</td></tr>";
+    });
+    html+="<tr class='total'><td>= Lucro ("+fmtPct(margReal)+" do preço)</td><td>"+fmtBRL.format(lucro)+"</td></tr>";
+    $("prova").innerHTML=html;
+
+    // checagem de faixa
+    var c=CANAIS[+sel.value];
+    if(exato<c[4] || exato>c[5]){
+      var alvo = faixaCerta(c[6], exato);
+      if(alvo!==null && alvo!==+sel.value){
+        avF.innerHTML="Atenção: o preço caiu fora da faixa deste cenário. A faixa certa é <b>"+
+          CANAIS[alvo][0]+"</b>.<button type='button' id='btnTroca'>Usar a faixa certa</button>";
+        avF.classList.add("mostra");
+        $("btnTroca").onclick=function(){ sel.value=alvo; carregaCanal(); };
+      }else{
+        avF.textContent="Atenção: o preço caiu fora da faixa deste cenário — confira as taxas da faixa correta.";
+        avF.classList.add("mostra");
+      }
+    }
+    salva();
+  }
+
+  function salva(){
+    try{
+      var d={c:sel.value};
+      ["custo","emb","frete","cpa","outros","imposto","margem","tCom","tExt","tFix"]
+        .forEach(function(id){ d[id]=$(id).value; });
+      localStorage.setItem("mg_calc", JSON.stringify(d));
+    }catch(e){}
+  }
+  function restaura(){
+    try{
+      var d=JSON.parse(localStorage.getItem("mg_calc")||"null");
+      if(!d) return false;
+      sel.value=d.c||0;
+      ["custo","emb","frete","cpa","outros","imposto","margem","tCom","tExt","tFix"]
+        .forEach(function(id){ if(d[id]!==undefined) $(id).value=d[id]; });
+      return true;
+    }catch(e){ return false; }
+  }
+
+  sel.addEventListener("change", carregaCanal);
+  ["custo","emb","frete","cpa","outros","imposto","margem","tCom","tExt","tFix"]
+    .forEach(function(id){ $(id).addEventListener("input", calc); });
+
+  $("btnAjustar").addEventListener("click", function(){
+    var d=$("detAjuste"); d.open=!d.open;
+  });
+  document.querySelectorAll("#chipsMargem button").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.querySelectorAll("#chipsMargem button").forEach(function(x){x.classList.remove("on");});
+      b.classList.add("on");
+      $("margem").value=b.dataset.m;
+      calc();
+    });
+  });
+  $("margem").addEventListener("input", function(){
+    document.querySelectorAll("#chipsMargem button").forEach(function(x){
+      x.classList.toggle("on", x.dataset.m===$("margem").value);
+    });
+  });
+  $("btnReset").addEventListener("click", function(){
+    ["custo","emb","frete","cpa","outros","imposto"].forEach(function(id){ $(id).value=""; });
+    $("margem").value="25";
+    document.querySelectorAll("#chipsMargem button").forEach(function(x){
+      x.classList.toggle("on", x.dataset.m==="25");
+    });
+    sel.value=0; carregaCanal();
+  });
+
+  // estado inicial
+  if(restaura()){ resumoTaxas(); calc(); }
+  else{
+    $("margem").value="25";
+    $("custo").value="18";
+    $("emb").value="1,50";
+    carregaCanal();
+  }
+})();
+</script>
