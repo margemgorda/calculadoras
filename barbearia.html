@@ -3,10 +3,10 @@
 <title>Calculadora da Barbearia</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&display=swap">
 <style>
-  /* Identidade Margem Gorda Barbearia: grafite + dourado, tema único assumido */
+  /* Identidade Margem Gorda Barbearia: corpo claro padrão da família, grafite + dourado nos acentos */
   *{box-sizing:border-box; margin:0}
   body{
-    background:#15181B; color:#E8E4DC;
+    background:#F5F3F0; color:#26221E;
     font-family:"Archivo",-apple-system,"Segoe UI",Roboto,sans-serif;
     font-size:16px; line-height:1.45;
     padding-bottom:180px;
@@ -17,17 +17,17 @@
   .logo{font-weight:800; font-size:1.1rem; color:#FFF}
   .logo em{font-style:normal; color:#C9973B}
   .edicao{font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:#8F8A80}
-  h1{font-size:1.05rem; font-weight:700; margin:18px 0 2px; color:#FFF}
-  .sub{color:#9C978D; font-size:.85rem; margin-bottom:14px}
-  .bloco{background:#1E2226; border:1px solid #33383D; border-radius:14px;
+  h1{font-size:1.05rem; font-weight:700; margin:18px 0 2px; color:#26221E}
+  .sub{color:#6E6A64; font-size:.85rem; margin-bottom:14px}
+  .bloco{background:#FFFFFF; border:1px solid #E3DED6; border-radius:14px;
     padding:16px; margin-bottom:12px}
   .bloco-t{font-size:.72rem; letter-spacing:.09em; text-transform:uppercase;
-    color:#C9973B; font-weight:800; margin-bottom:12px}
-  label{display:block; font-weight:700; font-size:.85rem; margin-bottom:6px; color:#E8E4DC}
-  label small{font-weight:500; color:#9C978D}
+    color:#A87B22; font-weight:800; margin-bottom:12px}
+  label{display:block; font-weight:700; font-size:.85rem; margin-bottom:6px; color:#26221E}
+  label small{font-weight:500; color:#6E6A64}
   input[type=text]{
     width:100%; padding:13px 12px; font-size:1.05rem; font-family:inherit;
-    color:#F2EFE8; background:#15181B; border:1.5px solid #3E444A;
+    color:#26221E; background:#FFFFFF; border:1.5px solid #C9BFB2;
     border-radius:10px}
   input:focus{outline:2px solid #C9973B; outline-offset:1px; border-color:#C9973B}
   .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
@@ -35,22 +35,22 @@
   .campo-g{margin-bottom:12px}
   .campo-g:last-child{margin-bottom:0}
   details{margin-top:10px}
-  summary{cursor:pointer; font-weight:700; font-size:.85rem; color:#D9A94C;
+  summary{cursor:pointer; font-weight:700; font-size:.85rem; color:#A87B22;
     list-style:none; padding:6px 0}
   summary::before{content:"+ "; font-weight:800}
   details[open] summary::before{content:"− "}
   .chips{display:flex; gap:8px; margin-top:8px}
-  .chips button{flex:1; padding:10px 0; border-radius:10px; border:1.5px solid #3E444A;
-    background:#15181B; color:#E8E4DC; font-family:inherit; font-weight:700;
+  .chips button{flex:1; padding:10px 0; border-radius:10px; border:1.5px solid #C9BFB2;
+    background:#FFFFFF; color:#26221E; font-family:inherit; font-weight:700;
     font-size:.9rem; cursor:pointer}
-  .chips button.on{background:#C9973B; border-color:#C9973B; color:#1B1508}
+  .chips button.on{background:#C9973B; border-color:#C9973B; color:#23272B}
   .chips button:focus-visible{outline:2px solid #C9973B; outline-offset:2px}
   .hora-chip{display:flex; justify-content:space-between; align-items:center;
-    background:#2A2419; border:1px solid #4A3D22; border-radius:10px;
-    padding:11px 12px; margin-top:12px; font-size:.88rem; color:#E0C68A}
-  .hora-chip b{font-size:1.05rem; color:#D9A94C; font-variant-numeric:tabular-nums}
+    background:#F7EFDD; border:1px solid #E2CFA4; border-radius:10px;
+    padding:11px 12px; margin-top:12px; font-size:.88rem; color:#7A5E1E}
+  .hora-chip b{font-size:1.05rem; color:#8A6A1F; font-variant-numeric:tabular-nums}
   .resultado{position:fixed; left:0; right:0; bottom:0; background:#23272B;
-    border-top:3px solid #C9973B; box-shadow:0 -6px 24px rgba(0,0,0,.5)}
+    border-top:3px solid #C9973B; box-shadow:0 -6px 24px rgba(0,0,0,.25)}
   .resultado .wrap{padding:12px 14px 14px}
   .res-linha{display:flex; align-items:flex-end; justify-content:space-between; gap:10px}
   .res-rotulo{font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:#8F8A80}
@@ -60,23 +60,23 @@
   .res-sobra{text-align:right; font-size:.8rem; color:#B8B3A8}
   .res-sobra b{font-size:1.05rem; color:#3FBF8F; font-variant-numeric:tabular-nums}
   .aviso{border-radius:10px; padding:9px 12px; font-size:.83rem; font-weight:600;
-    margin-top:8px; display:none; background:#3A1B16; color:#E06A5B}
+    margin-top:8px; display:none; background:#FBEAE8; color:#C0392B}
   .aviso.mostra{display:block}
   .prova{width:100%; border-collapse:collapse; font-size:.88rem; margin-top:6px}
-  .prova td{padding:7px 0; border-bottom:1px solid #33383D; color:#CBC6BB}
-  .prova td:last-child{text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:#E8E4DC}
-  .prova tr.total td{border-bottom:none; color:#3FBF8F; font-weight:800; font-size:.95rem}
-  .meta-box{background:#1B2B24; border:1px solid #2C4A3C; border-radius:10px;
-    padding:11px 12px; margin-top:10px; font-size:.84rem; color:#9FD9BF}
-  .meta-box b{color:#3FBF8F}
-  .nota{color:#8F8A80; font-size:.75rem; margin:14px 0 20px; text-align:center}
-  .reset{width:100%; padding:11px; border-radius:10px; border:1.5px solid #3E444A;
-    background:none; color:#9C978D; font-family:inherit; font-weight:700; cursor:pointer;
+  .prova td{padding:7px 0; border-bottom:1px solid #E3DED6; color:#4A443D}
+  .prova td:last-child{text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:#26221E}
+  .prova tr.total td{border-bottom:none; color:#0B7D57; font-weight:800; font-size:.95rem}
+  .meta-box{background:#EAF7F1; border:1px solid #BFE3D3; border-radius:10px;
+    padding:11px 12px; margin-top:10px; font-size:.84rem; color:#1E5F45}
+  .meta-box b{color:#0B7D57}
+  .nota{color:#8F887E; font-size:.75rem; margin:14px 0 20px; text-align:center}
+  .reset{width:100%; padding:11px; border-radius:10px; border:1.5px solid #C9BFB2;
+    background:none; color:#6E6A64; font-family:inherit; font-weight:700; cursor:pointer;
     margin-bottom:8px}
 </style>
 
 <noscript>
-  <div style="background:#3A1B16;color:#E06A5B;padding:14px;text-align:center;font-weight:700">
+  <div style="background:#FBEAE8;color:#C0392B;padding:14px;text-align:center;font-weight:700">
     Para a calculadora funcionar, abra este arquivo no NAVEGADOR (Safari ou Chrome).
     Na pré-visualização de arquivos os cálculos não rodam: toque em Compartilhar e escolha "Abrir no Safari".
   </div>
